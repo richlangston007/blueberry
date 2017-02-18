@@ -12,7 +12,7 @@ import DHT22
 
 
 # Adafruit io 
-aio = Client('f7379eb7d7d240c98f559ba13e7c3295')
+aio = Client('10b2825458e547d8adf6aca7d9633341')
 
 # Intervals of about 2 seconds or less will eventually hang the DHT22.
 INTERVAL=10
