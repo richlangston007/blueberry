@@ -1,15 +1,11 @@
-# file: inquiry.py
-# auth: Albert Huang <albert@csail.mit.edu>
-# desc: performs a simple device inquiry followed by a remote name request of
-#       each discovered device
-# $Id: inquiry.py 401 2006-05-05 19:07:48Z albert $
-#
+#Check to see if anyone is home
 
 import bluetooth
 import time
 import sys
+from Adafruit_IO import *
 
-#phones = {"6C:72:E7:A7:C4:92":'away',"90:B9:31:97:87:46":'away'}
+#open the file bluetooth-devices and get the BT addresses of our phones
 phones={}
 try:
     devfile=open("bluetooth-devices","r")
@@ -19,6 +15,10 @@ try:
     devfile.close()
 except:
     sys.exit("Can't read bluetooth-devices.  Does it exist?")
+#
+# Adafruit io
+aio = Client('10b2825458e547d8adf6aca7d9633341')
+
 lastSeen= time.time()
 home=False
 #time to wait before turning down the heat
@@ -41,8 +41,16 @@ while True:
             lastSeen=time.time()
             phones[phone] = "home"
             print (thisPhone, 'is home')
+            try:
+                aio.send("someone-home","yes")
+            except:
+                print("Adafruit cloud timeout/issue")
             break
     if ( time.time()-lastSeen >= delayTime): 
         Home=False
         print ('no one is home')
+        try:
+            aio.send("someone-home","no")
+        except:
+            print("Adafruit cloud timeout/issue")
     time.sleep(pause)
